@@ -94,7 +94,7 @@ def update_dict(
         tmp_dict_path = Path(
             NamedTemporaryFile(delete=False, dir=save_dir).name
         ).resolve()
-        pyopenjtalk.create_user_dict(
+        pyopenjtalk.mecab_dict_index(
             str(Path(f.name).resolve(strict=True)),
             str(tmp_dict_path),
         )
@@ -106,7 +106,7 @@ def update_dict(
             shutil.move(tmp_dict_path, compiled_dict_path)  # ドライブを跨ぐためPath.replaceが使えない
         finally:
             if compiled_dict_path.is_file():
-                pyopenjtalk.set_user_dict(str(compiled_dict_path.resolve(strict=True)))
+                pyopenjtalk.update_global_jtalk_with_user_dict(str(compiled_dict_path.resolve(strict=True)))
     finally:
         if Path(f.name).exists():
             delete_file(f.name)

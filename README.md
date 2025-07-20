@@ -307,15 +307,15 @@ Issue 側で取り組み始めたことを伝えるか、最初に Draft プル�
 
 ## 環境構築
 
-`Python 3.8.10` を用いて開発されています。
+`Python 3.11.13` を用いて開発されています。
 インストールするには、各 OS ごとの C/C++ コンパイラ、CMake が必要になります。
 
 ```bash
-# 開発に必要なライブラリのインストール
-python -m pip install -r requirements-dev.txt -r requirements-test.txt
+sudo apt update
+sudo apt upgrade
+sudo apt install llvm-14
+LLVM_CONFIG=/usr/bin/llvm-config-14 uv sync
 
-# とりあえず実行したいだけなら代わりにこちら
-python -m pip install -r requirements.txt
 ```
 
 ## 実行

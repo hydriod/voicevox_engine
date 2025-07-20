@@ -1,3 +1,27 @@
+[project]
+name = "voicevox-engine"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "anyio>=4.9.0",
+    "appdirs>=1.4.4",
+    "asgiref>=3.9.1",
+    "coeiroink-core",
+    "colorama>=0.4.6",
+    "fastapi>=0.116.1",
+    "h11>=0.16.0",
+    "pyopenjtalk",
+    "python-multipart>=0.0.20",
+    "sniffio>=1.3.1",
+    "starlette>=0.47.1",
+    "uvicorn>=0.35.0",
+    "torch>=2.6.0",
+    "torchaudio>=2.6.0",
+]
+
 [tool.pysen]
 version = "0.9"
 
@@ -31,43 +55,20 @@ line_length = 88
 multi_line_output = 3
 use_parentheses = true
 
-[tool.poetry]
-name = "voicevox_engine"
-version = "0.0.0"
-description = ""
-authors = ["Hiroshiba <hihokaruta@gmail.com>"]
+[tool.uv.sources]
+pyopenjtalk = { git = "https://github.com/VOICEVOX/pyopenjtalk", rev = "74703b034dd90a1f199f49bb70bf3b66b1728a86" }
+coeiroink-core = { git = "https://github.com/hydriod/coeiroink_core", rev = "p-3.11" }
+torch = [
+    { index = "pytorch-cpu" },
+]
+torchaudio = [
+    { index = "pytorch-cpu" },
+]
 
-[tool.poetry.dependencies]
-python = "~3.8"
-numpy = "^1.20.0"
-fastapi = "^0.70.0"
-python-multipart = "^0.0.5"
-uvicorn = "^0.15.0"
-aiofiles = "^0.7.0"
-soundfile = "^0.10.3.post1"
-scipy = "^1.7.1"
-pyyaml = "^6.0"
-pyworld = "^0.3.0"
-appdirs = "^1.4.4"
-requests = "^2.28.1"
-jinja2 = "^3.1.2"
-pyopenjtalk = {git = "https://github.com/VOICEVOX/pyopenjtalk", rev = "f4ade29ef9a4f43d8605103cb5bacc29e0b2ccae"}
-
-[tool.poetry.group.dev.dependencies]
-cython = "^0.29.24"
-pyinstaller = "^5.3"
-pre-commit = "^2.16.0"
-atomicwrites = "^1.4.0"
-colorama = "^0.4.4"
-poetry = "^1.3.1"
-
-[tool.poetry.group.test.dependencies]
-pysen = {version = "~0", extras = ["lint"]}
-pytest = "^6.2.5"
-coveralls = "^3.2.0"
-
-[tool.poetry.group.license.dependencies]
-pip-licenses = "^3.5.3"
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [build-system]
 requires = ["poetry-core"]

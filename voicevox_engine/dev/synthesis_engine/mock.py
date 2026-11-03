@@ -1,8 +1,8 @@
 from typing import List, Optional
 
 import numpy as np
-from coeirocore.coeiro_manager import AudioManager
-from coeirocore.query_manager import query2tokens_prosody
+from coeirocore_rs.coeiro_manager import AudioManager
+from coeirocore_rs.query_manager import query2tokens_prosody
 
 from ...model import AccentPhrase, AudioQuery
 from ...synthesis_engine import SynthesisEngineBase

@@ -9,7 +9,7 @@ import re
 import sys
 import traceback
 import zipfile
-from distutils.version import LooseVersion
+from packaging import version
 from functools import lru_cache
 from io import TextIOWrapper
 from pathlib import Path
@@ -1225,7 +1225,7 @@ if __name__ == "__main__":
         load_all_models=args.load_all_models,
     )
     assert len(synthesis_engines) != 0, "音声合成エンジンがありません。"
-    latest_core_version = str(max([LooseVersion(ver) for ver in synthesis_engines]))
+    latest_core_version = str(max([version.parse(ver) for ver in synthesis_engines]))
 
     cancellable_engine = None
     if args.enable_cancellable_synthesis:

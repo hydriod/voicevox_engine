@@ -165,7 +165,7 @@ class UserDictWord(BaseModel):
     yomi: str = Field(title="読み")
     pronunciation: str = Field(title="発音")
     accent_type: int = Field(title="アクセント型")
-    mora_count: Optional[int] = Field(title="モーラ数")
+    mora_count: Optional[int] = Field(title="モーラ数", default=None)
     accent_associative_rule: str = Field(title="アクセント結合規則")
 
     class Config:

@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 import numpy as np
 from pyopenjtalk import tts
 from scipy.signal import resample
-from coeirocore.coeiro_manager import MetaManager
+from coeirocore_rs.coeiro_manager import MetaManager
 
 DUMMY_TEXT = "これはダミーのテキストです"
 

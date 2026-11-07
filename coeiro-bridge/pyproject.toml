@@ -1,0 +1,75 @@
+# coeirocore-rs で COEIROINK エンジン（voicevox_engine fork）を動かすための実行環境
+#
+# 前提のディレクトリ配置（このファイルの親ディレクトリに並んでいること）:
+#   dev/
+#     engine-run/        ← このファイルの場所。uv sync で .venv ができる
+#     coeirocore-rs/       Rust コア本体（dev ブランチ）
+#     pyopenjtalk-fork/    VOICEVOX fork 版 pyopenjtalk（下記参照）
+#     voicevox_engine/     エンジン本体（ブランチ c-1.7.3+v-0.14.5）
+#     coeiro-bridge/       coeirocore 名義の橋渡しパッケージ
+#
+# pyopenjtalk-fork の用意:
+#   git clone --recursive https://github.com/VOICEVOX/pyopenjtalk.git pyopenjtalk-fork
+#   git -C pyopenjtalk-fork checkout f4ade29ef9a4f43d8605103cb5bacc29e0b2ccae
+#   ※ サブモジュール（lib/open_jtalk, lib/hts_engine_API）が必須。
+#   ※ PyPI 版は create_user_dict が無く、エンジンが起動時に落ちるので不可。
+#
+# 環境構築（検証済みの手順。Rust ツールチェーンと cmake が PATH に必要）:
+#   uv venv
+#   uv pip install setuptools wheel cython==0.29.37 numpy==1.26.4
+#   uv sync
+#   ※ 先に .venv へビルド用パッケージを入れておくのは、pyopenjtalk の
+#     no-build-isolation ビルドが解決フェーズで setuptools を参照するため。
+#     素の uv sync だけだと "No module named 'setuptools'" で落ちる。
+#
+# エンジンの起動（CWD の speaker_info を MetaManager が読む）:
+#   cd engine-run
+#   OPEN_JTALK_DICT_DIR=<辞書のパス> \
+#   PYTHONPATH=<dev>/voicevox_engine:<dev>/coeiro-bridge \
+#   uv run python <dev>/voicevox_engine/run.py --enable_mock \
+#       --voicevox_dir <dev>/engine-run --host 127.0.0.1 --port 50031
+
+[project]
+name = "coeiro-engine-env"
+version = "0.1.0"
+description = "coeirocore-rs で COEIROINK エンジン（voicevox_engine fork）を動かすための実行環境"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    # エンジン本体の依存。fork の poetry 指定は Python 3.8 前提のため、
+    # 3.11 で入るバージョンに緩めている
+    "fastapi==0.95.2",
+    "pydantic==1.10.13",
+    "uvicorn>=0.15",
+    "python-multipart",
+    "aiofiles",
+    "appdirs",
+    "pyyaml",
+    "requests",
+    "jinja2",
+    "soundfile",
+    "scipy==1.11.4",
+    "pyworld",
+    # コア側（どちらもローカルパス。tool.uv.sources 参照）
+    "coeirocore-rs",
+    "pyopenjtalk",
+    # バージョン固定が要るもの
+    "numpy==1.26.4", # 2.x に上げると pyopenjtalk fork の拡張が ABI 不一致で壊れる
+    "setuptools<81", # pyworld が pkg_resources を import するため
+    # pyopenjtalk fork のビルド用（no-build-isolation でこの環境を使ってビルドする）
+    "cython==0.29.37", # 3.x では .pyx のコンパイルが通らない
+    "wheel",
+]
+
+[tool.uv.sources]
+coeirocore-rs = { path = "../coeirocore-rs", editable = true }
+pyopenjtalk = { path = "../pyopenjtalk-fork" }
+
+[tool.uv]
+package = false
+# pyopenjtalk fork の build-system は numpy<1.20 を要求していて隔離ビルドが成立しない。
+# 隔離をやめ、この環境の Cython 0.29 / numpy 1.26 でビルドする（実証済みの組み合わせ）
+no-build-isolation-package = ["pyopenjtalk"]
+
+# no-build-isolation のビルド前に、ビルド用パッケージを環境へ入れておく指定
+[tool.uv.extra-build-dependencies]
+pyopenjtalk = ["setuptools", "wheel", "cython==0.29.37", "numpy==1.26.4"]
